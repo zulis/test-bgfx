@@ -1,6 +1,6 @@
 [submodule "external/bigg"]
 	path = external/bigg
-	url = ../../JoshuaBrookover/bigg.git
+	url = https://github.com/JoshuaBrookover/bigg.git
 [submodule "external/entt"]
 	path = external/entt
-	url = ../../skypjack/entt.git
+	url = https://github.com/skypjack/entt.git
