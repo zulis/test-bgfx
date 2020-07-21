@@ -1,4 +1,4 @@
-# cmake_minimum_required( VERSION 3.0 )
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 # set(CMAKE_CXX_STANDARD 14)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -10,10 +10,10 @@
 # target_link_libraries( bigg PUBLIC bgfx imgui glfw glm )
 # target_include_directories( bigg PUBLIC include )
 
-option(BIGG_EXAMPLES OFF)
-set(BIGG_ASSET_GEN OFF)
-add_subdirectory(external/bigg)
-add_subdirectory(external/entt)
+# CMake Complains if this is not set
+set(OpenGL_GL_PREFERENCE GLVND)
+
+add_subdirectory(external)
 add_subdirectory(examples)
 
 

@@ -1,8 +1,12 @@
 #include "bigg.hpp"
-#include "entt/entt.hpp"
+// #include "entt/entt.hpp"
+#include <entt/entity/registry.hpp>
 
 class ExampleImguiDemo : public bigg::Application
 {
+    /* Entity Registry */
+    entt::registry m_registry{};
+
     void onReset()
     {
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0xc0c0c0ff, 1.0f, 0);

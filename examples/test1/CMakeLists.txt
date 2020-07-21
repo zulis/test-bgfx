@@ -1,3 +1,4 @@
-add_executable( test1 main.cpp )
-target_link_libraries( test1 bigg EnTT )
-set_target_properties( test1 PROPERTIES FOLDER "examples" )
+set(EXEC_NAME test1)
+add_executable(${EXEC_NAME} main.cpp )
+target_link_libraries(${EXEC_NAME} bigg EnTT::EnTT )
+set_target_properties(${EXEC_NAME} PROPERTIES FOLDER "examples" )
