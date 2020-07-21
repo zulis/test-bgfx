@@ -1,0 +1,6 @@
+[submodule "external/bigg"]
+	path = external/bigg
+	url = https://github.com/JoshuaBrookover/bigg.git
+[submodule "external/entt"]
+	path = external/entt
+	url = https://github.com/skypjack/entt.git
