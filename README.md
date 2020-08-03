@@ -10,3 +10,8 @@ git submodule update --remote --merge
 ```
 git submodule update --init --recursive
 ```
+
+## Generate solution files
+```
+premake5 --file=premake5.lua vs2019
+```
