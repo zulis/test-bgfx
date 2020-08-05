@@ -126,6 +126,9 @@ project "bgfx_shared"
 	links { "bimg", "bx" }
 	filter "configurations:Debug"
 		defines "BGFX_CONFIG_DEBUG=1"
+		targetname ("bgfx_debug")
+	filter "configurations:Release"
+		targetname ("bgfx")
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
 		excludes
@@ -329,3 +332,16 @@ project "hello_world_mt"
 	filter "system:linux"
 		links { "dl", "GL", "pthread", "X11" }
 	setBxCompat()
+
+-------------------------------------------------------------------------------
+
+-- project "csharp_hello_world"
+-- 	kind "ConsoleApp"
+-- 	language "C#"
+-- 	dotnetframework "netcoreapp3.1"
+-- 	files
+-- 	{
+-- 		path.join(BGFX_DIR, "bindings/cs/**.cs"),
+-- 		"examples/%{prj.name}/**.cs"
+-- 	}
+-- 	links { }
