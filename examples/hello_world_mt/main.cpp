@@ -17,8 +17,10 @@
 #include <GLFW/glfw3native.h>
 #include "logo.h"
 
-#include "entt.hpp"
-#include "imgui.h"
+#include <entt.hpp>
+#include <imgui.h>
+#include <glm/vec3.hpp>
+#include <spdlog/spdlog.h>
 
 static bx::DefaultAllocator s_allocator;
 static bx::SpScUnboundedQueue s_apiThreadEvents(&s_allocator);

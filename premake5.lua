@@ -2,18 +2,24 @@ local BUILD_DIR = path.join("build", _ACTION)
 if _OPTIONS["cc"] ~= nil then
 	BUILD_DIR = BUILD_DIR .. "_" .. _OPTIONS["cc"]
 end
+
+-- BUILD_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
 local BGFX_DIR = "external/bgfx"
 local BIMG_DIR = "external/bimg"
 local BX_DIR = "external/bx"
 local GLFW_DIR = "external/glfw"
 local ENTT_DIR = "external/entt"
 local IMGUI_DIR = "external/imgui"
+local GLM_DIR = "external/glm"
+local SPDLOG_DIR = "external/spdlog"
 
-solution "test-bgfx"
+workspace  "test-bgfx"
 	location(BUILD_DIR)
 	startproject "hello_world"
 	configurations { "Release", "Debug" }
-	if os.is64bit() and not os.istarget("windows") then
+	-- if os.is64bit() and not os.istarget("windows") then
+	if os.is64bit() then
 		platforms "x86_64"
 	else
 		platforms { "x86", "x86_64" }
@@ -44,61 +50,9 @@ function setBxCompat()
 		includedirs { path.join(BX_DIR, "include/compat/osx") }
 		buildoptions { "-x objective-c++" }
 end
-	
-project "hello_world"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	exceptionhandling "Off"
-	rtti "Off"
-	files
-	{
-		"examples/%{prj.name}/**.h",
-		"examples/%{prj.name}/**.cpp",
-	}
-	includedirs
-	{
-		path.join(BGFX_DIR, "include"),
-		path.join(BX_DIR, "include"),
-		path.join(GLFW_DIR, "include"),
-		path.join(ENTT_DIR, "single_include/entt"),
-		IMGUI_DIR
-	}
-	links { "bgfx", "bimg", "bx", "glfw", "imgui" }
-	filter "system:windows"
-		links { "gdi32", "kernel32", "psapi" }
-	filter "system:linux"
-		links { "dl", "GL", "pthread", "X11" }
-	filter "system:macosx"
-		links { "QuartzCore.framework", "Metal.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework" }
-	setBxCompat()
 
-project "hello_world_mt"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	exceptionhandling "Off"
-	rtti "Off"
-	files
-	{
-		"examples/%{prj.name}/**.h",
-		"examples/%{prj.name}/**.cpp",
-	}
-	includedirs
-	{
-		path.join(BGFX_DIR, "include"),
-		path.join(BX_DIR, "include"),
-		path.join(GLFW_DIR, "include"),
-		path.join(ENTT_DIR, "single_include/entt"),
-		IMGUI_DIR
-	}
-	links { "bgfx", "bimg", "bx", "glfw", "imgui" }
-	filter "system:windows"
-		links { "gdi32", "kernel32", "psapi" }
-	filter "system:linux"
-		links { "dl", "GL", "pthread", "X11" }
-	setBxCompat()
-	
+-------------------------------------------------------------------------------
+
 project "bgfx"
 	kind "StaticLib"
 	language "C++"
@@ -141,6 +95,53 @@ project "bgfx"
 		}
 	setBxCompat()
 
+-------------------------------------------------------------------------------
+
+project "bgfx_shared"
+	kind "SharedLib"
+	language "C++"
+	cppdialect "C++17"
+	exceptionhandling "Off"
+	rtti "Off"
+	defines "__STDC_FORMAT_MACROS"
+	files
+	{
+		path.join(BGFX_DIR, "include/bgfx/**.h"),
+		path.join(BGFX_DIR, "src/*.cpp"),
+		path.join(BGFX_DIR, "src/*.h"),
+	}
+	excludes
+	{
+		path.join(BGFX_DIR, "src/amalgamated.cpp"),
+	}
+	includedirs
+	{
+		path.join(BX_DIR, "include"),
+		path.join(BIMG_DIR, "include"),
+		path.join(BGFX_DIR, "include"),
+		path.join(BGFX_DIR, "3rdparty"),
+		path.join(BGFX_DIR, "3rdparty/dxsdk/include"),
+		path.join(BGFX_DIR, "3rdparty/khronos")
+	}
+	links { "bimg", "bx" }
+	filter "configurations:Debug"
+		defines "BGFX_CONFIG_DEBUG=1"
+	filter "action:vs*"
+		defines "_CRT_SECURE_NO_WARNINGS"
+		excludes
+		{
+			path.join(BGFX_DIR, "src/glcontext_glx.cpp"),
+			path.join(BGFX_DIR, "src/glcontext_egl.cpp")
+		}
+	filter "system:macosx"
+		files
+		{
+			path.join(BGFX_DIR, "src/*.mm"),
+		}
+	setBxCompat()
+
+-------------------------------------------------------------------------------
+
 project "bimg"
 	kind "StaticLib"
 	language "C++"
@@ -163,6 +164,8 @@ project "bimg"
 		path.join(BIMG_DIR, "3rdparty/astc-codec/include"),
 	}
 	setBxCompat()
+
+-------------------------------------------------------------------------------
 
 project "bx"
 	kind "StaticLib"
@@ -190,7 +193,9 @@ project "bx"
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
 	setBxCompat()
-		
+
+-------------------------------------------------------------------------------
+
 project "glfw"
 	kind "StaticLib"
 	language "C"
@@ -245,6 +250,8 @@ project "glfw"
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
 
+-------------------------------------------------------------------------------
+
 project "imgui"
 	kind "StaticLib"
 	language "C++"
@@ -256,3 +263,69 @@ project "imgui"
 		path.join(IMGUI_DIR, "*.h"),
 		path.join(IMGUI_DIR, "*.cpp")
 	}
+
+-------------------------------------------------------------------------------
+	
+project "hello_world"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	exceptionhandling "Off"
+	rtti "Off"
+	files
+	{
+		"examples/%{prj.name}/**.h",
+		"examples/%{prj.name}/**.cpp",
+		path.join(GLM_DIR, "glm/**.hpp"),
+		path.join(GLM_DIR, "glm/**.inl")
+	}
+	includedirs
+	{
+		path.join(BGFX_DIR, "include"),
+		path.join(BX_DIR, "include"),
+		path.join(GLFW_DIR, "include"),
+		path.join(ENTT_DIR, "single_include/entt"),
+		path.join(SPDLOG_DIR, "include"),
+		IMGUI_DIR,
+		GLM_DIR
+	}
+	links { "bgfx", "bimg", "bx", "glfw", "imgui" }
+	filter "system:windows"
+		links { "gdi32", "kernel32", "psapi" }
+	filter "system:linux"
+		links { "dl", "GL", "pthread", "X11" }
+	filter "system:macosx"
+		links { "QuartzCore.framework", "Metal.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework" }
+	setBxCompat()
+
+-------------------------------------------------------------------------------
+
+project "hello_world_mt"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	exceptionhandling "Off"
+	rtti "Off"
+	files
+	{
+		"examples/%{prj.name}/**.h",
+		"examples/%{prj.name}/**.cpp",
+		path.join(GLM_DIR, "glm/**.hpp"),
+		path.join(GLM_DIR, "glm/**.inl")
+	}
+	includedirs
+	{
+		path.join(BGFX_DIR, "include"),
+		path.join(BX_DIR, "include"),
+		path.join(GLFW_DIR, "include"),
+		path.join(ENTT_DIR, "single_include/entt"),
+		path.join(SPDLOG_DIR, "include"),
+		IMGUI_DIR,
+		GLM_DIR
+	}
+	links { "bgfx", "bimg", "bx", "glfw", "imgui" }
+	filter "system:windows"
+		links { "gdi32", "kernel32", "psapi" }
+	filter "system:linux"
+		links { "dl", "GL", "pthread", "X11" }
+	setBxCompat()
