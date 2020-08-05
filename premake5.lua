@@ -13,6 +13,7 @@ local ENTT_DIR = "external/entt"
 local IMGUI_DIR = "external/imgui"
 local GLM_DIR = "external/glm"
 local SPDLOG_DIR = "external/spdlog"
+local GLFW_NET_DIR = "external/glfw-net"
 
 workspace  "test-bgfx"
 	location(BUILD_DIR)
@@ -255,6 +256,63 @@ project "glfw"
 
 -------------------------------------------------------------------------------
 
+project "glfw_shared"
+	kind "SharedLib"
+	language "C"
+	targetname ("glfw")
+	files
+	{
+		path.join(GLFW_DIR, "include/GLFW/*.h"),
+		path.join(GLFW_DIR, "src/context.c"),
+		path.join(GLFW_DIR, "src/egl_context.*"),
+		path.join(GLFW_DIR, "src/init.c"),
+		path.join(GLFW_DIR, "src/input.c"),
+		path.join(GLFW_DIR, "src/internal.h"),
+		path.join(GLFW_DIR, "src/monitor.c"),
+		path.join(GLFW_DIR, "src/osmesa_context.*"),
+		path.join(GLFW_DIR, "src/vulkan.c"),
+		path.join(GLFW_DIR, "src/window.c"),
+	}
+	includedirs { path.join(GLFW_DIR, "include") }
+	filter "system:windows"
+		defines "_GLFW_WIN32"
+		files
+		{
+			path.join(GLFW_DIR, "src/win32_*.*"),
+			path.join(GLFW_DIR, "src/wgl_context.*")
+		}
+	filter "system:linux"
+		defines "_GLFW_X11"
+		files
+		{
+			path.join(GLFW_DIR, "src/glx_context.*"),
+			path.join(GLFW_DIR, "src/linux*.*"),
+			path.join(GLFW_DIR, "src/posix*.*"),
+			path.join(GLFW_DIR, "src/x11*.*"),
+			path.join(GLFW_DIR, "src/xkb*.*")
+		}
+	filter "system:macosx"
+		defines "_GLFW_COCOA"
+		files
+		{
+			path.join(GLFW_DIR, "src/cocoa_*.*"),
+			path.join(GLFW_DIR, "src/posix_thread.h"),
+			path.join(GLFW_DIR, "src/nsgl_context.h"),
+			path.join(GLFW_DIR, "src/egl_context.h"),
+			path.join(GLFW_DIR, "src/osmesa_context.h"),
+
+			path.join(GLFW_DIR, "src/posix_thread.c"),
+			path.join(GLFW_DIR, "src/nsgl_context.m"),
+			path.join(GLFW_DIR, "src/egl_context.c"),
+			path.join(GLFW_DIR, "src/nsgl_context.m"),
+			path.join(GLFW_DIR, "src/osmesa_context.c"),                       
+		}
+
+	filter "action:vs*"
+		defines "_CRT_SECURE_NO_WARNINGS"
+
+-------------------------------------------------------------------------------
+
 project "imgui"
 	kind "StaticLib"
 	language "C++"
@@ -338,10 +396,25 @@ project "hello_world_mt"
 -- project "csharp_hello_world"
 -- 	kind "ConsoleApp"
 -- 	language "C#"
--- 	dotnetframework "netcoreapp3.1"
+-- 	nuget { "glfw-net:3.3.1" }
+-- 	-- dotnetframework "netcoreapp3.1"
 -- 	files
 -- 	{
 -- 		path.join(BGFX_DIR, "bindings/cs/**.cs"),
+-- 		-- "examples/%{prj.name}/*.csproj",
 -- 		"examples/%{prj.name}/**.cs"
 -- 	}
--- 	links { }
+-- 	links { "System.Drawing" }
+-- 	filter "system:windows"
+-- 		clr "Unsafe"
+-- 		systemversion "latest"
+
+-- 	filter "configurations:Debug"
+-- 		clr "Unsafe"
+-- 		symbols "On"
+-- 		optimize "Debug"
+-- 		defines "DEBUG"
+
+-- 	filter "configurations:Release"
+-- 		clr "Unsafe"
+-- 		optimize "Full"
