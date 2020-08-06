@@ -260,6 +260,7 @@ project "glfw_shared"
 	kind "SharedLib"
 	language "C"
 	targetname ("glfw")
+	defines { "_GLFW_BUILD_DLL" }
 	files
 	{
 		path.join(GLFW_DIR, "include/GLFW/*.h"),
@@ -275,7 +276,7 @@ project "glfw_shared"
 	}
 	includedirs { path.join(GLFW_DIR, "include") }
 	filter "system:windows"
-		defines "_GLFW_WIN32"
+		defines { "_GLFW_WIN32" }
 		files
 		{
 			path.join(GLFW_DIR, "src/win32_*.*"),
@@ -393,28 +394,32 @@ project "hello_world_mt"
 
 -------------------------------------------------------------------------------
 
+-- outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
 -- project "csharp_hello_world"
 -- 	kind "ConsoleApp"
 -- 	language "C#"
+-- 	clr "Unsafe"
 -- 	nuget { "glfw-net:3.3.1" }
--- 	-- dotnetframework "netcoreapp3.1"
+-- 	dotnetframework "netcoreapp3.1"
+-- 	configurations {}
+-- 	-- dotnetframework "netstandard2.1"
+
+-- 	-- targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+-- 	-- objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	
 -- 	files
 -- 	{
 -- 		path.join(BGFX_DIR, "bindings/cs/**.cs"),
--- 		-- "examples/%{prj.name}/*.csproj",
 -- 		"examples/%{prj.name}/**.cs"
 -- 	}
--- 	links { "System.Drawing" }
--- 	filter "system:windows"
--- 		clr "Unsafe"
--- 		systemversion "latest"
+
+-- 	links { "glfw_shared", "bgfx_shared" }
 
 -- 	filter "configurations:Debug"
--- 		clr "Unsafe"
 -- 		symbols "On"
 -- 		optimize "Debug"
 -- 		defines "DEBUG"
 
 -- 	filter "configurations:Release"
--- 		clr "Unsafe"
 -- 		optimize "Full"
