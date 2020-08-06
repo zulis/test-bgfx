@@ -104,7 +104,7 @@ project "bgfx_shared"
 	cppdialect "C++17"
 	exceptionhandling "Off"
 	rtti "Off"
-	defines "__STDC_FORMAT_MACROS"
+	defines { "__STDC_FORMAT_MACROS", "BGFX_SHARED_LIB_BUILD=1" }
 	files
 	{
 		path.join(BGFX_DIR, "include/bgfx/**.h"),
