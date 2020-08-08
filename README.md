@@ -13,5 +13,5 @@ git submodule update --init --recursive
 
 ## Generate solution files
 ```
-premake5 --file=premake5.lua vs2019
+premake5 vs2019
 ```

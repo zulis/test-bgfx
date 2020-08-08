@@ -394,32 +394,24 @@ project "hello_world_mt"
 
 -------------------------------------------------------------------------------
 
--- outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
--- project "csharp_hello_world"
--- 	kind "ConsoleApp"
--- 	language "C#"
--- 	clr "Unsafe"
--- 	nuget { "glfw-net:3.3.1" }
--- 	dotnetframework "netcoreapp3.1"
--- 	configurations {}
--- 	-- dotnetframework "netstandard2.1"
-
--- 	-- targetdir ("bin/" .. outputdir .. "/%{prj.name}")
--- 	-- objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+project "csharp_hello_world"
+	kind "ConsoleApp"
+	language "C#"
+	clr "Unsafe"
+	nuget { "glfw-net:3.3.1" }
+	dotnetframework "netcoreapp3.1"
+	configurations {}
 	
--- 	files
--- 	{
--- 		path.join(BGFX_DIR, "bindings/cs/**.cs"),
--- 		"examples/%{prj.name}/**.cs"
--- 	}
+	files
+	{
+		-- path.join(BGFX_DIR, "bindings/cs/**.cs"),
+		"examples/%{prj.name}/**.cs"
+	}
 
--- 	links { "glfw_shared", "bgfx_shared" }
+	filter "configurations:Debug"
+		symbols "On"
+		optimize "Debug"
+		defines "DEBUG"
 
--- 	filter "configurations:Debug"
--- 		symbols "On"
--- 		optimize "Debug"
--- 		defines "DEBUG"
-
--- 	filter "configurations:Release"
--- 		optimize "Full"
+	filter "configurations:Release"
+		optimize "Full"
