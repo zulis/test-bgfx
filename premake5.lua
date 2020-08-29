@@ -16,7 +16,8 @@ local SPDLOG_DIR = "external/spdlog"
 local GLFW_NET_DIR = "external/glfw-net"
 
 workspace  "test-bgfx"
-	location(BUILD_DIR)
+	-- location(BUILD_DIR)
+	location(BUILD_DIR .. "/%{prj and prj.name or ''}")
 	startproject "hello_world"
 	configurations { "Release", "Debug" }
 	-- if os.is64bit() and not os.istarget("windows") then
@@ -398,13 +399,13 @@ project "csharp_hello_world"
 	kind "ConsoleApp"
 	language "C#"
 	clr "Unsafe"
-	nuget { "glfw-net:3.3.1" }
+	-- nuget { "glfw-net:3.3.1" }
 	dotnetframework "netcoreapp3.1"
-	configurations {}
+	-- configurations {}
 	
 	files
 	{
-		-- path.join(BGFX_DIR, "bindings/cs/**.cs"),
+		path.join(BGFX_DIR, "bindings/cs/**.cs"),
 		"examples/%{prj.name}/**.cs"
 	}
 
