@@ -15,16 +15,16 @@ local GLM_DIR = "external/glm"
 local SPDLOG_DIR = "external/spdlog"
 local GLFW_NET_DIR = "external/glfw-net"
 
-workspace  "test-bgfx"
+workspace "test-bgfx"
 	-- location(BUILD_DIR)
 	location(BUILD_DIR .. "/%{prj and prj.name or ''}")
 	startproject "hello_world"
 	configurations { "Release", "Debug" }
 	-- if os.is64bit() and not os.istarget("windows") then
 	if os.is64bit() then
-		platforms "x86_64"
+		platforms { "Any CPU", "x86_64" }
 	else
-		platforms { "x86", "x86_64" }
+		platforms { "Any CPU", "x86", "x86_64" }
 	end
 	filter "configurations:Release"
 		defines "NDEBUG"
@@ -42,6 +42,18 @@ workspace  "test-bgfx"
 			["MACOSX_DEPLOYMENT_TARGET"] = "10.9",
 			["ALWAYS_SEARCH_USER_PATHS"] = "YES", -- This is the minimum version of macos we'll be able to run on
 		};
+
+-- Theoretically this could be added to workspace.
+-- Unfortunately, it breaks C# project configuration - sets C# to Release in Configuration Manager.
+-- Just apply this for each C++ project.
+function setArchOnAnyCPU()
+	filter "platforms:Any CPU"
+	if os.is64bit() then
+		architecture "x86_64"
+	else
+		architecture "x86"
+	end
+end
 
 function setBxCompat()
 	filter "action:vs*"
@@ -96,6 +108,7 @@ project "bgfx"
 			path.join(BGFX_DIR, "src/*.mm"),
 		}
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -144,6 +157,7 @@ project "bgfx_shared"
 			path.join(BGFX_DIR, "src/*.mm"),
 		}
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -169,6 +183,7 @@ project "bimg"
 		path.join(BIMG_DIR, "3rdparty/astc-codec/include"),
 	}
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -198,6 +213,7 @@ project "bx"
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -254,6 +270,7 @@ project "glfw"
 
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -312,6 +329,7 @@ project "glfw_shared"
 
 	filter "action:vs*"
 		defines "_CRT_SECURE_NO_WARNINGS"
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -326,7 +344,7 @@ project "imgui"
 		path.join(IMGUI_DIR, "*.h"),
 		path.join(IMGUI_DIR, "*.cpp")
 	}
-
+	setArchOnAnyCPU()
 -------------------------------------------------------------------------------
 	
 project "hello_world"
@@ -360,6 +378,7 @@ project "hello_world"
 	filter "system:macosx"
 		links { "QuartzCore.framework", "Metal.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework" }
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -392,6 +411,7 @@ project "hello_world_mt"
 	filter "system:linux"
 		links { "dl", "GL", "pthread", "X11" }
 	setBxCompat()
+	setArchOnAnyCPU()
 
 -------------------------------------------------------------------------------
 
@@ -401,7 +421,6 @@ project "csharp_hello_world"
 	clr "Unsafe"
 	-- nuget { "glfw-net:3.3.1" }
 	dotnetframework "netcoreapp3.1"
-	-- configurations {}
 	
 	files
 	{
